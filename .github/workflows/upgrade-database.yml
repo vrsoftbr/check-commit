@@ -139,7 +139,7 @@ jobs:
           
       - name: Upgrade database
         run: |
-          cd VRCore && ./gradlew atualizarTabelas  database-260971
+          cd VRCore && ./gradlew atualizarTabelas
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.VRPACKAGETOKEN }}
