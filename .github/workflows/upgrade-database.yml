@@ -100,14 +100,21 @@ jobs:
         with:
           files: './vr/vr.properties'
 
+      - name: Run Docker Container from vrsoftbr/postgres
+        run: |
+          sleep 10
+          export BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          docker run -P --name bancovrdatabase-$BRANCH -v ./db:/bkp -d vrsoftbr/postgres    
+
       - name: Creating vr.properties
         if: steps.check_vrproperties.outputs.files_exists == 'false'
         run: |
+          export IPBANCO=$(docker container inspect bancovrdatabase | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
           sudo mkdir -p /vr
           sudo chown -R $USER /vr
           touch /vr/vr.properties
-          echo "database.ip=localhost" >> /vr/vr.properties
-          echo "database.porta=5433" >> /vr/vr.properties
+          echo "database.ip=$IPBANCO" >> /vr/vr.properties
+          echo "database.porta=5432" >> /vr/vr.properties
           echo "database.nome=vr" >> /vr/vr.properties
           echo "database.usuario=postgres" >> /vr/vr.properties
           echo "database.senha=VrPost@Server" >> /vr/vr.properties
@@ -132,11 +139,6 @@ jobs:
           distribution: temurin
           java-version: 8
 
-      - name: Run Docker Container from vrsoftbr/postgres
-        run: |
-          sleep 10
-          docker run -P --name bancovrdatabase -p 5433:5432 -v ./db:/bkp -d vrsoftbr/postgres
-          
       - name: Upgrade database
         run: |
           cd VRCore && ./gradlew atualizarTabelas
