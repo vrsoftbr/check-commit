@@ -97,7 +97,7 @@ jobs:
         id:  download-backup
         uses: actions/cache/restore@v4
         with:
-          path: /home/ubuntu/${{ runner.name }}/db/updated_database.bak
+          path: /db/updated_database.bak
           key: database-${{ github.run_number }}${{ github.run_attempt }}
 
       - name: Run Docker Container from vrsoftbr/postgres
@@ -123,7 +123,7 @@ jobs:
       - name: Restore Backup
         run: |
           sleep 10
-          docker cp /home/ubuntu/${{ runner.name }}/db/updated_database.bak bancovr-${{ runner.name }}:/tmp/database.bkp
+          docker cp /db/updated_database.bak bancovr-${{ runner.name }}:/tmp/database.bkp
           docker exec bancovr-${{ runner.name }} restore_db
 
       - name: restore Gradle-cache 
