@@ -13,11 +13,6 @@ on:
         required: true
         type: string
 
-      database-port:
-        description: 'Database port number'
-        required: true
-        type: number
-
     secrets:
       VRPACKAGETOKEN:
         required: true
@@ -93,26 +88,8 @@ jobs:
           path: VRCore
           fetch-depth: 0
 
-      - name: delete vr.properties
-        run: sudo rm -rf /vr
-
-      - name: Creating vr.properties
-        run: |
-          sudo mkdir -p /vr
-          sudo chown -R $USER /vr
-          touch /vr/vr.properties
-          echo "database.ip=localhost" >> /vr/vr.properties
-          echo "database.porta=${{ inputs.database-port }}" >> /vr/vr.properties
-          echo "database.nome=vr" >> /vr/vr.properties
-          echo "database.usuario=postgres" >> /vr/vr.properties
-          echo "database.senha=VrPost@Server" >> /vr/vr.properties
-          echo "system.numeroloja=1" >> /vr/vr.properties
-          
-          cat /vr/vr.properties
-
       - name: Creating folder to backup
         run: |
-          sudo rm -rf /db
           sudo mkdir /db
           sleep 5
 
@@ -126,13 +103,28 @@ jobs:
       - name: Run Docker Container from vrsoftbr/postgres
         run: |
           sleep 10
-          docker run -P --name bancovr${{ inputs.database-port }} -p ${{ inputs.database-port }}:5432 -d vrsoftbr/postgres
-      
+          docker run -P --name bancovr-${{ runner.name }} -p 5432:5432 -d vrsoftbr/postgres
+
+      - name: Creating vr.properties
+        run: |
+          export IPBANCO=$(docker container inspect bancovrdatabase | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
+          sudo mkdir -p /vr
+          sudo chown -R $USER /vr
+          touch /vr/vr.properties
+          echo "database.ip=$IPBANCO" >> /vr/vr.properties
+          echo "database.porta=5432" >> /vr/vr.properties
+          echo "database.nome=vr" >> /vr/vr.properties
+          echo "database.usuario=postgres" >> /vr/vr.properties
+          echo "database.senha=VrPost@Server" >> /vr/vr.properties
+          echo "system.numeroloja=1" >> /vr/vr.properties
+          
+          cat /vr/vr.properties
+
       - name: Restore Backup
         run: |
           sleep 10
-          docker cp ./db/updated_database.bak bancovr${{ inputs.database-port }}:/tmp/database.bkp
-          docker exec bancovr${{ inputs.database-port }} restore_db
+          docker cp ./db/updated_database.bak bancovr-${{ runner.name }}:/tmp/database.bkp
+          docker exec bancovr-${{ runner.name }} restore_db
 
       - name: restore Gradle-cache 
         uses: actions/cache/restore@v3
@@ -165,8 +157,3 @@ jobs:
           name: ${{ inputs.task-name }}Report
           path: VRCore/build/reports/tests/${{ inputs.task-name }}
           retention-days: 2
-    
-      - name: Shutdown container
-        run: |
-          docker stop bancovr${{ inputs.database-port }}
-          docker rm -f bancovr${{ inputs.database-port }}
