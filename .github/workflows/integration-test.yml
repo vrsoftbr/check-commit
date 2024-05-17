@@ -90,6 +90,7 @@ jobs:
 
       - name: Creating folder to backup
         run: |
+          sudo rm -rf /db
           sudo mkdir /db
           sleep 5
 
@@ -108,6 +109,7 @@ jobs:
       - name: Creating vr.properties
         run: |
           export IPBANCO=$(docker container inspect bancovrdatabase | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
+          sudo rm -rf /vr
           sudo mkdir -p /vr
           sudo chown -R $USER /vr
           touch /vr/vr.properties
@@ -126,17 +128,17 @@ jobs:
           docker cp /db/updated_database.bak bancovr-${{ runner.name }}:/tmp/database.bkp
           docker exec bancovr-${{ runner.name }} restore_db
 
-      - name: restore Gradle-cache 
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: |
-            ~/.gradle/
-            ./VRCore/.gradle
-            ./VRFramework/.gradle
-            ./VRNFe/.gradle
-            ~/.m2/
-          key: gradle-${{ github.run_number }}${{ github.run_attempt }}
+      # - name: restore Gradle-cache 
+      #   uses: actions/cache/restore@v3
+      #   id: restore-cache
+      #   with:
+      #     path: |
+      #       ~/.gradle/
+      #       ./VRCore/.gradle
+      #       ./VRFramework/.gradle
+      #       ./VRNFe/.gradle
+      #       ~/.m2/
+      #     key: gradle-${{ github.run_number }}${{ github.run_attempt }}
 
       - uses: actions/setup-java@v4
         with:
