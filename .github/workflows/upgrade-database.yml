@@ -83,20 +83,20 @@ jobs:
           path: VRCore
           fetch-depth: 0
 
-      - name: Creating folder to backup
-        run: |
-          sudo rm -rf /db
-          sudo mkdir /db
-          sleep 5
+      # - name: Creating folder to backup
+      #   run: |
+      #     sudo rm -rf /db
+      #     sudo mkdir /db
+      #     sleep 5
 
       - name: Run Docker Container from vrsoftbr/postgres
         run: |
           sleep 10
-          docker run -P --name bancovr-${{ runner.name }} -v /db:/bkp -d vrsoftbr/postgres    
+          docker run -P --name bancovrdatabase -d vrsoftbr/postgres    
 
       - name: Creating vr.properties
         run: |
-          export IPBANCO=$(docker container inspect bancovr-${{ runner.name }} | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
+          export IPBANCO=$(docker container inspect bancovrdatabase | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
           sudo rm -rf /vr
           sudo mkdir -p /vr
           sudo chown -R $USER /vr
@@ -134,13 +134,13 @@ jobs:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.VRPACKAGETOKEN }}
 
-      - name: Generate backup
-        run: |
-          docker exec bancovr-${{ runner.name }} pg_dump -Fc -U postgres vr -f /bkp/updated_database.bak 
+      # - name: Generate backup
+      #   run: |
+      #     docker exec bancovr-${{ runner.name }} pg_dump -Fc -U postgres vr -f /bkp/updated_database.bak 
 
-      - name: Upload backup
-        id: upload-cache
-        uses: actions/cache/save@v4
-        with:
-          path: /db/updated_database.bak
-          key: database-${{ github.run_number }}${{ github.run_attempt }}
+      # - name: Upload backup
+      #   id: upload-cache
+      #   uses: actions/cache/save@v4
+      #   with:
+      #     path: /db/updated_database.bak
+      #     key: database-${{ github.run_number }}${{ github.run_attempt }}
