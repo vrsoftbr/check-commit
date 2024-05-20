@@ -18,7 +18,7 @@ jobs:
       group: ${{ inputs.run-group }}
     steps:
       - name: sleep
-        run: sleep 10
+        run: /usr/bin/sleep 10
 
       - name: Clone VRFramework
         uses: actions/checkout@v3
