@@ -92,6 +92,18 @@ jobs:
       #     sudo mkdir /db
       #     sleep 5
 
+      - name: Clean Docker Container
+        run: |
+          STATUSCONTAINER=$(docker container inspect -f '{{.State.Running}}' bancovrdatabase 2>/dev/null)
+
+          if [ $? -eq 1 ]; then
+              echo "Container de banco não encontrado"
+          else
+              echo "Removendo banco VR"
+              docker container stop bancovrdatabase
+              docker container rm -f bancovrdatabase
+          fi
+
       - name: Run Docker Container from vrsoftbr/postgres
         run: |
           sleep 10
