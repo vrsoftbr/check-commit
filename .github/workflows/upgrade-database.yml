@@ -109,7 +109,7 @@ jobs:
       - name: Run Docker Container from vrsoftbr/postgres
         run: |
           sleep 10
-          docker run -P --name bancovrdatabase -d vrsoftbr/postgres -p 5432:5432
+          docker run -P --name bancovrdatabase -d -p 5432:5432 vrsoftbr/postgres
 
       # - name: Creating vr.properties
       #   run: |
