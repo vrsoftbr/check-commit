@@ -107,11 +107,10 @@ jobs:
           files: '.env'
       
       - name: Clean .env file
-        if: steps.check_env.outputs.files_exists == 'false'
+        if: steps.check_env.outputs.files_exists == 'true'
         run: rm .env
 
       - name: Creating .env file
-        if: steps.check_env.outputs.files_exists == 'false'
         run: |
           touch .env
           echo "IMAGE=postgres:13-alpine" >> .env
