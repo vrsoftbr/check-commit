@@ -109,7 +109,13 @@ jobs:
       - name: Run Docker Container from vrsoftbr/postgres
         run: |
           sleep 10
+          docker login ${{ secrets.VRDOCKERLOGIN }}
           docker run -P --name bancovrdatabase -d -p 5432:5432 vrsoftbr/postgres
+
+      - name: Restore Backup
+        run: |
+          sleep 10
+          docker exec bancovrdatabase restore_db
 
       # - name: Creating vr.properties
       #   run: |
