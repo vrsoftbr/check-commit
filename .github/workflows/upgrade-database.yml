@@ -104,14 +104,15 @@ jobs:
         id: check_env
         uses: andstor/file-existence-action@v3
         with:
-          files: '.env'
+          files: 'rm /VRCore/.env'
       
       - name: Clean .env file
         if: steps.check_env.outputs.files_exists == 'true'
-        run: rm .env
+        run: rm /VRCore/.env
 
       - name: Creating .env file
         run: |
+          cd VRCore
           touch .env
           echo "IMAGE=postgres:13-alpine" >> .env
           echo "PASSWORD=VrPost@Server" >> .env
