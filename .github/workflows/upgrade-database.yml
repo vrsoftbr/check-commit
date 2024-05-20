@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: sleep
         run: sleep 10
-        
+
       - name: Clone VRFramework
         uses: actions/checkout@v3
         with:
@@ -97,21 +97,22 @@ jobs:
           sleep 10
           docker run -P --name bancovrdatabase -d vrsoftbr/postgres    
 
-      - name: Creating vr.properties
-        run: |
-          export IPBANCO=$(docker container inspect bancovrdatabase | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
-          sudo rm -rf /vr
-          sudo mkdir -p /vr
-          sudo chown -R $USER /vr
-          touch /vr/vr.properties
-          echo "database.ip=$IPBANCO" >> /vr/vr.properties
-          echo "database.porta=5432" >> /vr/vr.properties
-          echo "database.nome=vr" >> /vr/vr.properties
-          echo "database.usuario=postgres" >> /vr/vr.properties
-          echo "database.senha=VrPost@Server" >> /vr/vr.properties
-          echo "system.numeroloja=1" >> /vr/vr.properties
+      # - name: Creating vr.properties
+      #   run: |
+      #     sleep 10
+      #     export IPBANCO=$(docker container inspect bancovrdatabase | grep '"IPAddress"' | cut -d'"' -f4 | tail -n1)
+      #     sudo rm -rf /vr
+      #     sudo mkdir -p /vr
+      #     sudo chown -R $USER /vr
+      #     touch /vr/vr.properties
+      #     echo "database.ip=localhost" >> /vr/vr.properties
+      #     echo "database.porta=5432" >> /vr/vr.properties
+      #     echo "database.nome=vr" >> /vr/vr.properties
+      #     echo "database.usuario=postgres" >> /vr/vr.properties
+      #     echo "database.senha=VrPost@Server" >> /vr/vr.properties
+      #     echo "system.numeroloja=1" >> /vr/vr.properties
           
-          cat /vr/vr.properties
+      #     cat /vr/vr.properties
 
       # - name: restore Gradle-cache 
       #   uses: actions/cache/restore@v3
