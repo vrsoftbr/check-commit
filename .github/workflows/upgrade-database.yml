@@ -80,14 +80,14 @@ jobs:
             echo $branch;
             git checkout $branch;
 
-      - name: Check vrcore path existence
-        id: check_vrcore
-        uses: andstor/file-existence-action@v3
-        with:
-          files: '/VRCore'
+      # - name: Check vrcore path existence
+      #   id: check_vrcore
+      #   uses: andstor/file-existence-action@v3
+      #   with:
+      #     files: '/VRCore'
 
       - name: Clean VRCore
-        if: steps.check_vrcore.outputs.files_exists == 'true'
+        # if: steps.check_vrcore.outputs.files_exists == 'true'
         run: sudo rm -rf /VRCore
 
       - name: Clone VRCore
