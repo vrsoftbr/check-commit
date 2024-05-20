@@ -94,7 +94,7 @@ jobs:
 
       - name: Clean Docker Container
         run: |
-          STATUSCONTAINER=$(docker container inspect -f '{{.State.Running}}' bancovrdatabase 2>/dev/null)
+          export STATUSCONTAINER=$(docker container inspect -f '{{.State.Running}}' bancovrdatabase 2>/dev/null)
 
           if [ $? -eq 1 ]; then
               echo "Container de banco não encontrado"
