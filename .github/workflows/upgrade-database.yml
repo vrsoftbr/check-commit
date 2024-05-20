@@ -105,6 +105,10 @@ jobs:
         uses: andstor/file-existence-action@v3
         with:
           files: '.env'
+      
+      - name: Clean .env file
+        if: steps.check_env.outputs.files_exists == 'false'
+        run: rm .env
 
       - name: Creating .env file
         if: steps.check_env.outputs.files_exists == 'false'
